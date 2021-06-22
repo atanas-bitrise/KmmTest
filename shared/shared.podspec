@@ -8,9 +8,6 @@ Pod::Spec.new do |spec|
     spec.summary                  = 'Some description for the Shared Module'
 
     spec.static_framework         = true
-    spec.frameworks               = 'shared'
-    spec.xcconfig = { 'FRAMEWORK_SEARCH_PATHS' => '${PODS_ROOT}/../../shared/build/bin/ios/releaseFramework', 'OTHER_LDFLAGS' => '-framework shared'
-    }
     spec.vendored_frameworks      = "build/cocoapods/framework/shared.framework"
     spec.libraries                = "c++"
     spec.module_name              = "#{spec.name}_umbrella"
@@ -28,4 +25,22 @@ Pod::Spec.new do |spec|
         'KOTLIN_TARGET[sdk=appletvos*]' => 'tvos_arm64',
         'KOTLIN_TARGET[sdk=macosx*]' => 'macos_x64'
     }
+
+    spec.script_phases = [
+        {
+            :name => 'Build shared',
+            :execution_position => :before_compile,
+            :shell_path => '/bin/sh',
+            :script => <<-SCRIPT
+                set -ev
+                REPO_ROOT="$PODS_TARGET_SRCROOT"
+                "$REPO_ROOT/../gradlew" -p "$REPO_ROOT" :shared:syncFramework \
+                    -Pkotlin.native.cocoapods.target=$KOTLIN_TARGET \
+                    -Pkotlin.native.cocoapods.configuration=$CONFIGURATION \
+                    -Pkotlin.native.cocoapods.cflags="$OTHER_CFLAGS" \
+                    -Pkotlin.native.cocoapods.paths.headers="$HEADER_SEARCH_PATHS" \
+                    -Pkotlin.native.cocoapods.paths.frameworks="$FRAMEWORK_SEARCH_PATHS"
+            SCRIPT
+        }
+    ]
 end
