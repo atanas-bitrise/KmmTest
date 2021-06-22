@@ -9,7 +9,8 @@ Pod::Spec.new do |spec|
 
     spec.static_framework         = true
     spec.frameworks               = 'shared'
-    spec.xcconfig = { 'FRAMEWORK_SEARCH_PATHS' => '${PODS_ROOT}/../../shared/build/bin/ios/releaseFramework' }
+    spec.xcconfig = { 'FRAMEWORK_SEARCH_PATHS' => '${PODS_ROOT}/../../shared/build/bin/ios/releaseFramework', 'OTHER_LDFLAGS' => '-framework shared'
+    }
     spec.vendored_frameworks      = "build/cocoapods/framework/shared.framework"
     spec.libraries                = "c++"
     spec.module_name              = "#{spec.name}_umbrella"
