@@ -8,6 +8,8 @@ Pod::Spec.new do |spec|
     spec.summary                  = 'Some description for the Shared Module'
 
     spec.static_framework         = true
+    spec.frameworks               = 'shared'
+    spec.xcconfig = { 'FRAMEWORK_SEARCH_PATHS' => '${PODS_ROOT}/../../shared/build/bin/ios/releaseFramework' }
     spec.vendored_frameworks      = "build/cocoapods/framework/shared.framework"
     spec.libraries                = "c++"
     spec.module_name              = "#{spec.name}_umbrella"
@@ -25,9 +27,4 @@ Pod::Spec.new do |spec|
         'KOTLIN_TARGET[sdk=appletvos*]' => 'tvos_arm64',
         'KOTLIN_TARGET[sdk=macosx*]' => 'macos_x64'
     }
-
-    spec.prepare_command = <<-SCRIPT
-          set -ev
-          ./gradlew --no-daemon -Pframework=#{spec.name}.framework linkReleaseFrameworkIos --stacktrace --info
-        SCRIPT
 end
